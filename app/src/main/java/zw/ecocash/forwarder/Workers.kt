@@ -51,7 +51,7 @@ class CatchUpWorker(c: Context, p: WorkerParameters) : CoroutineWorker(c, p) {
             while (c.moveToNext()) {
                 val addr = c.getString(0) ?: continue
                 if (!Scrub.wanted(addr, allowed)) continue
-                dao.insert(Sms(sender = addr, body = c.getString(1) ?: "", receivedAt = c.getLong(2)))
+                dao.insertIfNew(Sms(sender = addr, body = c.getString(1) ?: "", receivedAt = c.getLong(2)))
             }
         }
         s.lastScan = now

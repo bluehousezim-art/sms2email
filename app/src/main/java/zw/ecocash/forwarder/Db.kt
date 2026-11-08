@@ -26,6 +26,9 @@ interface SmsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(s: Sms): Long
 
+    @Query("SELECT COUNT(*) FROM sms WHERE sender = :sender AND body = :body AND receivedAt BETWEEN :from AND :to")
+    suspend fun countNear(sender: String, body: String, from: Long, to: Long): Int
+
     @Query("SELECT * FROM sms WHERE status = 0 ORDER BY receivedAt ASC")
     suspend fun pending(): List<Sms>
 
@@ -65,4 +68,14 @@ abstract class AppDb : RoomDatabase() {
                 .build().also { inst = it }
         }
     }
+}
+
+/**
+ * The live receiver stores the network (SMSC) time, the inbox scan stores the phone's receive time.
+ * They differ by a few seconds, so an exact match is not enough: treat the same sender + same text
+ * within 3 minutes as the same SMS. (Different EcoCash transactions always have different text/Txn IDs.)
+ */
+suspend fun SmsDao.insertIfNew(s: Sms) {
+    val w = 3L * 60 * 1000
+    if (countNear(s.sender, s.body, s.receivedAt - w, s.receivedAt + w) == 0) insert(s)
 }

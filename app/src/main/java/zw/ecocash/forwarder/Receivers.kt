@@ -23,7 +23,7 @@ class SmsReceiver : BroadcastReceiver() {
                 val dao = AppDb.get(context).dao()
                 for ((sender, msgs) in bySender) {
                     if (!Scrub.wanted(sender, allowed)) continue
-                    dao.insert(Sms(
+                    dao.insertIfNew(Sms(
                         sender = sender,
                         body = msgs.joinToString("") { it.messageBody ?: "" },
                         receivedAt = msgs.first().timestampMillis
