@@ -7,6 +7,8 @@ package zw.ecocash.forwarder
  */
 object Scrub {
     private val rules = listOf(
+        // ZESA tokens are 20 digits in groups of 4: remove the whole thing, not just the first group.
+        Regex("(?i)(token)\\s*(?:is|:|=)?\\s*\\d[\\d\\s-]{6,}\\d") to "$1 [removed]",
         Regex("(?i)(pin|otp|one[- ]?time (?:pin|password|code)|token|password|code)\\s*(?:is|:|=)?\\s*\\d{3,8}") to "$1 [removed]",
         Regex("(?i)(verification|confirmation|reset)\\s+code\\s*(?:is|:)?\\s*\\d{3,8}") to "$1 code [removed]"
     )
