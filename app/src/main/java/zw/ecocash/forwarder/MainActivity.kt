@@ -138,6 +138,10 @@ class MainActivity : ComponentActivity() {
             OutlinedTextField(gmail, { gmail = it }, label = { Text("This phone's Gmail address") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(pw, { pw = it }, label = { Text("Gmail app password (16 letters)") }, singleLine = true,
                 visualTransformation = PasswordVisualTransformation(), modifier = Modifier.fillMaxWidth())
+            TextButton(onClick = {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://myaccount.google.com/apppasswords")))
+            }) { Text("Tap here to create the app password (opens Google)") }
+            Text("Sign in with THIS phone's Gmail. If Google says it is not available, turn on 2-Step Verification first.", style = MaterialTheme.typography.bodySmall)
             OutlinedTextField(to, { to = it }, label = { Text("Send to") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(senders, { senders = it }, label = { Text("SMS senders to forward (comma separated)") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(pin, { pin = it }, label = { Text("Owner PIN (blank = none)") }, singleLine = true,
